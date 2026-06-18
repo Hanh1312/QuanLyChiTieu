@@ -1,6 +1,7 @@
 import sqlite3
 from datetime import date
 import os
+DATABASE = "expense.db"
 
 source = os.path.join(
     os.getcwd(),
@@ -85,3 +86,166 @@ def create_tables():
 
 
 create_tables()
+# =====================================
+# LOGIN
+# =====================================
+
+def check_login(username, password):
+
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    cursor.execute(
+        """
+        SELECT *
+        FROM Users
+        WHERE Username=?
+        AND PasswordHash=?
+        """,
+        (username, password)
+    )
+
+    user = cursor.fetchone()
+
+    conn.close()
+
+    return user
+
+
+# =====================================
+# DASHBOARD
+# =====================================
+
+def get_total_income():
+
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        SELECT COALESCE(
+            SUM(Amount),
+            0
+        )
+        FROM Transactions
+        WHERE Type='Income'
+    """)
+
+    result = cursor.fetchone()[0]
+
+    conn.close()
+
+    return result
+
+
+def get_total_expense():
+
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        SELECT COALESCE(
+            SUM(Amount),
+            0
+        )
+        FROM Transactions
+        WHERE Type='Expense'
+    """)
+
+    result = cursor.fetchone()[0]
+
+    conn.close()
+
+    return result
+
+
+def get_total_debt_pay():
+
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        SELECT COALESCE(
+            SUM(Amount),
+            0
+        )
+        FROM DebtPay
+        WHERE Status='Unpaid'
+    """)
+
+    result = cursor.fetchone()[0]
+
+    conn.close()
+
+    return result
+
+
+def get_total_debt_receive():
+
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        SELECT COALESCE(
+            SUM(Amount),
+            0
+        )
+        FROM DebtReceive
+        WHERE Status='Uncollected'
+    """)
+
+    result = cursor.fetchone()[0]
+
+    conn.close()
+
+    return result
+
+
+# =====================================
+# DUE DEBT WARNING
+# =====================================
+
+def get_due_debts():
+
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        SELECT *
+        FROM DebtPay
+        WHERE Status='Unpaid'
+    """)
+
+    debts = cursor.fetchall()
+
+    conn.close()
+
+    warning_list = []
+
+    today = date.today()
+
+    for debt in debts:
+
+        try:
+
+            due_date = date.fromisoformat(
+                debt["DueDate"]
+            )
+
+            days_left = (
+                due_date - today
+            ).days
+
+            if days_left <= 3:
+
+                warning_list.append(
+                    (
+                        debt["PersonName"],
+                        debt["Amount"],
+                        days_left
+                    )
+                )
+
+        except:
+            pass
+
+    return warning_list

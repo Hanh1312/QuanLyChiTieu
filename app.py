@@ -382,47 +382,6 @@ def debt_receive():
 # =====================================
 
 @app.route("/add_debt_receive", methods=["POST"])
-
-def get_due_debts():
-
-    conn = get_connection()
-    cursor = conn.cursor()
-
-    cursor.execute("""
-        SELECT *
-        FROM DebtPay
-        WHERE Status='Unpaid'
-    """)
-
-    debts = cursor.fetchall()
-
-    conn.close()
-
-    result = []
-
-    today = datetime.today().date()
-
-    for debt in debts:
-
-        due = datetime.strptime(
-            debt["DueDate"],
-            "%Y-%m-%d"
-        ).date()
-
-        days_left = (due - today).days
-
-        if days_left <= 3:
-
-            result.append(
-                (
-                    debt["PersonName"],
-                    debt["Amount"],
-                    days_left
-                )
-            )
-
-    return result
-
 def add_debt_receive():
 
     if not login_required():
@@ -566,7 +525,7 @@ auto_backup()
 
 if __name__ == "__main__":
     app.run(
-        debug=True,
+        debug=False,
         host="0.0.0.0",
         port=5000
     )
