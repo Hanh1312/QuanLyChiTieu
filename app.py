@@ -382,6 +382,7 @@ def debt_receive():
 # =====================================
 
 @app.route("/add_debt_receive", methods=["POST"])
+
 def get_due_debts():
 
     conn = get_connection()
@@ -391,10 +392,36 @@ def get_due_debts():
         SELECT *
         FROM DebtPay
         WHERE Status='Unpaid'
-        AND DATEDIFF(day,GETDATE(),DueDate)<=3
     """)
 
-    return cursor.fetchall()
+    debts = cursor.fetchall()
+
+    conn.close()
+
+    result = []
+
+    today = datetime.today().date()
+
+    for debt in debts:
+
+        due = datetime.strptime(
+            debt["DueDate"],
+            "%Y-%m-%d"
+        ).date()
+
+        days_left = (due - today).days
+
+        if days_left <= 3:
+
+            result.append(
+                (
+                    debt["PersonName"],
+                    debt["Amount"],
+                    days_left
+                )
+            )
+
+    return result
 
 def add_debt_receive():
 
@@ -479,11 +506,11 @@ def report():
 
     cursor.execute("""
         SELECT
-            MONTH(TransactionDate) AS MonthNum,
+            strftime('%m', TransactionDate) AS MonthNum,
             SUM(Amount) AS TotalAmount
         FROM Transactions
         WHERE Type='Expense'
-        GROUP BY MONTH(TransactionDate)
+        GROUP BY strftime('%m', TransactionDate)
         ORDER BY MonthNum
     """)
 
