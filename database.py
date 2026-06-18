@@ -1,139 +1,83 @@
-import pyodbc
-SERVER = r'Manh'
-DATABASE = 'QuanLyChiTieu'
+import sqlite3
+from datetime import date
+
+DATABASE = "expense.db"
+
 
 def get_connection():
 
-    return pyodbc.connect(
-        "DRIVER={ODBC Driver 17 for SQL Server};"
-        f"SERVER={SERVER};"
-        f"DATABASE={DATABASE};"
-        "Trusted_Connection=yes;"
+    conn = sqlite3.connect(DATABASE)
+
+    conn.row_factory = sqlite3.Row
+
+    return conn
+def create_tables():
+
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS Users
+    (
+        UserID INTEGER PRIMARY KEY AUTOINCREMENT,
+        Username TEXT UNIQUE,
+        PasswordHash TEXT
     )
-# ==========================
-# LOGIN
-# ==========================
-
-def check_login(username, password):
-    conn = get_connection()
-    cursor = conn.cursor()
-
-    cursor.execute("""
-        SELECT *
-        FROM Users
-        WHERE Username = ?
-        AND PasswordHash = ?
-    """, (username, password))
-
-    user = cursor.fetchone()
-
-    conn.close()
-
-    return user
-
-# ==========================
-# DASHBOARD
-# ==========================
-
-def get_total_income():
-    conn = get_connection()
-    cursor = conn.cursor()
-
-    cursor.execute("""
-        SELECT ISNULL(SUM(Amount),0)
-        FROM Transactions
-        WHERE Type='Income'
     """)
 
-    value = cursor.fetchone()[0]
-
-    conn.close()
-
-    return float(value)
-
-def get_total_expense():
-    conn = get_connection()
-    cursor = conn.cursor()
-
     cursor.execute("""
-        SELECT ISNULL(SUM(Amount),0)
-        FROM Transactions
-        WHERE Type='Expense'
+    CREATE TABLE IF NOT EXISTS Transactions
+    (
+        TransactionID INTEGER PRIMARY KEY AUTOINCREMENT,
+        TransactionDate TEXT,
+        Type TEXT,
+        Category TEXT,
+        Amount REAL,
+        Note TEXT
+    )
     """)
 
-    value = cursor.fetchone()[0]
-
-    conn.close()
-
-    return float(value)
-
-def get_total_debt_pay():
-    conn = get_connection()
-    cursor = conn.cursor()
-
     cursor.execute("""
-        SELECT ISNULL(SUM(Amount),0)
-        FROM DebtPay
-        WHERE Status='Unpaid'
+    CREATE TABLE IF NOT EXISTS DebtPay
+    (
+        DebtID INTEGER PRIMARY KEY AUTOINCREMENT,
+        PersonName TEXT,
+        Amount REAL,
+        DueDate TEXT,
+        Status TEXT DEFAULT 'Unpaid',
+        Note TEXT
+    )
     """)
 
-    value = cursor.fetchone()[0]
-
-    conn.close()
-
-    return float(value)
-
-def get_total_debt_receive():
-    conn = get_connection()
-    cursor = conn.cursor()
-
     cursor.execute("""
-        SELECT ISNULL(SUM(Amount),0)
-        FROM DebtReceive
-        WHERE Status='Uncollected'
+    CREATE TABLE IF NOT EXISTS DebtReceive
+    (
+        DebtID INTEGER PRIMARY KEY AUTOINCREMENT,
+        PersonName TEXT,
+        Amount REAL,
+        DueDate TEXT,
+        Status TEXT DEFAULT 'Uncollected',
+        Note TEXT
+    )
     """)
 
-    value = cursor.fetchone()[0]
-
-    conn.close()
-
-    return float(value)
-
-from datetime import date
-
-def get_due_debts():
-
-    conn = get_connection()
-    cursor = conn.cursor()
-
     cursor.execute("""
-        SELECT *
-        FROM DebtPay
-        WHERE Status='Unpaid'
+    INSERT OR IGNORE INTO Users
+    (
+        UserID,
+        Username,
+        PasswordHash
+    )
+    VALUES
+    (
+        1,
+        'admin',
+        'admin123'
+    )
     """)
 
-    debts = cursor.fetchall()
-
+    conn.commit()
     conn.close()
 
-    warning_list = []
 
-    today = date.today()
-
-    for debt in debts:
-
-        days_left = (
-            debt.DueDate - today
-        ).days
-
-        if days_left <= 3:
-
-            warning_list.append(
-                (
-                    debt.PersonName,
-                    debt.Amount,
-                    days_left
-                )
-            )
-
-    return warning_list
+create_tables()

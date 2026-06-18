@@ -1,4 +1,5 @@
 Flask
-pyodbc
-pandas
+Flask
+gunicorn
+Werkzeug
 Werkzeug

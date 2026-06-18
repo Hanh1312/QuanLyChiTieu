@@ -11,7 +11,6 @@ from flask import (
     flash
 )
 
-import pyodbc
 from database import *
 
 app = Flask(__name__)
