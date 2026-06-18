@@ -1,0 +1,287 @@
+/* ==========================
+   GOOGLE FONT
+========================== */
+
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap");
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Poppins", sans-serif;
+}
+
+/* ==========================
+   BODY
+========================== */
+
+body {
+  background: #f8f9ff;
+  color: #444;
+}
+
+/* ==========================
+   LOGIN
+========================== */
+
+.login-body {
+  background: linear-gradient(135deg, #ffd6e8, #d6e4ff, #d8fff0);
+}
+
+.login-card {
+  border: none;
+  border-radius: 25px;
+}
+
+/* ==========================
+   BUTTON
+========================== */
+
+.btn-pastel {
+  background: #b8c0ff;
+  border: none;
+  color: white;
+  font-weight: 600;
+  padding: 12px;
+  border-radius: 12px;
+  transition: 0.3s;
+}
+
+.btn-pastel:hover {
+  background: #9aa7ff;
+  color: white;
+}
+
+/* ==========================
+   FORM
+========================== */
+
+.form-control {
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+  padding: 12px;
+}
+
+.form-control:focus {
+  border-color: #b8c0ff;
+  box-shadow: 0 0 0 0.15rem rgba(184, 192, 255, 0.25);
+}
+
+/* ==========================
+   SIDEBAR
+========================== */
+
+.sidebar {
+  min-height: 100vh;
+  background: #ffffff;
+  border-right: 1px solid #ececec;
+}
+
+.sidebar-title {
+  color: #7b7ff6;
+  font-weight: 600;
+}
+
+.sidebar a {
+  display: block;
+  text-decoration: none;
+  color: #555;
+  padding: 12px 15px;
+  border-radius: 12px;
+  margin-bottom: 8px;
+  transition: 0.3s;
+}
+
+.sidebar a:hover {
+  background: #eef2ff;
+  color: #6366f1;
+}
+
+.sidebar .active {
+  background: #dbe4ff;
+  color: #4f46e5;
+}
+
+/* ==========================
+   CARDS
+========================== */
+
+.pastel-card {
+  background: #ffffff;
+  border: none;
+  border-radius: 20px;
+}
+
+.stat-card {
+  padding: 20px;
+  border-radius: 20px;
+  color: #444;
+}
+
+.card-income {
+  background: #d8fff0;
+}
+
+.card-expense {
+  background: #ffe0e6;
+}
+
+.card-balance {
+  background: #e0e7ff;
+}
+
+.card-debt {
+  background: #fff3cd;
+}
+
+.card-receive {
+  background: #e2f5ff;
+}
+
+/* ==========================
+   TABLE
+========================== */
+
+.table-container {
+  background: white;
+  border-radius: 20px;
+  padding: 20px;
+}
+
+.table {
+  margin-bottom: 0;
+}
+
+.table thead {
+  background: #eef2ff;
+}
+
+.table th {
+  border: none;
+}
+
+.table td {
+  vertical-align: middle;
+}
+
+/* ==========================
+   BADGES
+========================== */
+
+.badge-paid {
+  background: #c8f7dc;
+  color: #166534;
+}
+
+.badge-unpaid {
+  background: #ffe0e6;
+  color: #b91c1c;
+}
+
+.badge-collected {
+  background: #d8fff0;
+  color: #166534;
+}
+
+.badge-wait {
+  background: #fff3cd;
+  color: #92400e;
+}
+
+/* ==========================
+   PAGE TITLE
+========================== */
+
+.page-title {
+  font-weight: 600;
+  color: #6366f1;
+}
+
+/* ==========================
+   NAVBAR
+========================== */
+
+.topbar {
+  background: white;
+  border-radius: 20px;
+  padding: 15px 20px;
+  margin-bottom: 25px;
+}
+
+/* ==========================
+   CHART
+========================== */
+
+.chart-card {
+  background: white;
+  border-radius: 20px;
+  padding: 20px;
+}
+
+/* ==========================
+   BUTTONS
+========================== */
+
+.btn-success-custom {
+  background: #d8fff0;
+  color: #166534;
+  border: none;
+}
+
+.btn-danger-custom {
+  background: #ffe0e6;
+  color: #b91c1c;
+  border: none;
+}
+
+.btn-warning-custom {
+  background: #fff3cd;
+  color: #92400e;
+  border: none;
+}
+
+/* ==========================
+   FLASH MESSAGE
+========================== */
+
+.alert {
+  border-radius: 12px;
+}
+
+/* ==========================
+   RESPONSIVE
+========================== */
+
+@media (max-width: 768px) {
+  .sidebar {
+    min-height: auto;
+  }
+
+  .stat-card {
+    margin-bottom: 15px;
+  }
+}
+.dark-mode {
+  background: #121212;
+  color: white;
+}
+
+.dark-mode .sidebar {
+  background: #1f1f1f;
+}
+
+.dark-mode .topbar {
+  background: #1f1f1f;
+}
+
+.dark-mode .chart-card {
+  background: #1f1f1f;
+}
+
+.dark-mode .table-container {
+  background: #1f1f1f;
+}
+
+.dark-mode table {
+  color: white;
+}
