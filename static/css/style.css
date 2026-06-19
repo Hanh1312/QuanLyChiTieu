@@ -291,31 +291,13 @@ body {
 ========================= */
 
 .menu-toggle {
-  display: none;
+  display: flex;
 
-  position: fixed;
+  align-items: center;
 
-  top: 15px;
+  justify-content: center;
 
-  left: 15px;
-
-  width: 50px;
-
-  height: 50px;
-
-  border: none;
-
-  border-radius: 12px;
-
-  background: #a7b7ff;
-
-  color: white;
-
-  font-size: 24px;
-
-  z-index: 9999;
-
-  cursor: pointer;
+  font-size: 28px;
 }
 
 .welcome-box {
@@ -386,7 +368,11 @@ body {
 
     transition: 0.3s;
   }
+  .sidebar a i {
+    margin-right: 10px;
 
+    width: 20px;
+  }
   .sidebar.show {
     left: 0;
   }
