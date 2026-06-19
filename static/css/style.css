@@ -282,8 +282,8 @@ body {
   background: #1f1f1f;
 }
 
-.dark-mode table {
-  color: white;
+.dark-mode .table {
+  color: #222;
 }
 
 /* =========================
@@ -485,11 +485,24 @@ body {
 }
 
 .dark-mode .table {
-  color: white;
+  color: #f5f5f5 !important;
 }
 
 .dark-mode .table thead {
-  background: #2a2a2a;
+  background: #2a2a2a !important;
+}
+
+.dark-mode .table thead th {
+  color: #ffffff !important;
+}
+
+.dark-mode .table tbody tr {
+  background: #1e1e1e !important;
+}
+
+.dark-mode .table tbody td {
+  color: #f5f5f5 !important;
+  border-color: #333 !important;
 }
 
 .dark-mode .form-control {
@@ -498,6 +511,15 @@ body {
   border-color: #444;
 }
 
+.dark-mode input,
+.dark-mode textarea,
+.dark-mode select {
+  color: #f5f5f5 !important;
+}
+
+.dark-mode input::placeholder {
+  color: #bbb;
+}
 .dark-mode .form-control::placeholder {
   color: #aaa;
 }
@@ -509,7 +531,22 @@ body {
 .dark-mode .stat-card {
   color: #ffffff;
 }
+.dark-mode .modal-content {
+  background: #1e1e1e;
+  color: white;
+}
 
+.dark-mode .modal-header,
+.dark-mode .modal-footer {
+  border-color: #444;
+}
+
+.dark-mode .form-control,
+.dark-mode .form-select {
+  background: #2a2a2a;
+  color: white;
+  border-color: #555;
+}
 .dark-mode .card-income {
   background: #174c38;
 }
@@ -586,4 +623,20 @@ body {
 
     margin: 0;
   }
+}
+
+.dark-mode .table-container,
+.dark-mode .card,
+.dark-mode .modal-content,
+.dark-mode .topbar,
+.dark-mode .chart-card,
+.dark-mode .welcome-box {
+  color: #f5f5f5 !important;
+}
+
+.dark-mode .form-label,
+.dark-mode label,
+.dark-mode span,
+.dark-mode p {
+  color: #f5f5f5 !important;
 }
