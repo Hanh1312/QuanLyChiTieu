@@ -583,8 +583,6 @@ body {
 .dark-mode h5,
 .dark-mode h6,
 .dark-mode p,
-.dark-mode td,
-.dark-mode th,
 .dark-mode label {
   color: #f5f5f5;
 }
@@ -638,5 +636,26 @@ body {
 .dark-mode label,
 .dark-mode span,
 .dark-mode p {
+  color: #f5f5f5 !important;
+}
+
+/* TABLE DARK MODE */
+
+.dark-mode table {
+  color: #f5f5f5 !important;
+}
+
+.dark-mode table th {
+  background: #2a2a2a !important;
+  color: #ffffff !important;
+}
+
+.dark-mode table td {
+  background: #1e1e1e !important;
+  color: #f5f5f5 !important;
+}
+
+.dark-mode .table-striped > tbody > tr:nth-of-type(odd) > * {
+  background: #252525 !important;
   color: #f5f5f5 !important;
 }
