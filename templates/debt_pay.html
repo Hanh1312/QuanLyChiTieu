@@ -145,13 +145,21 @@
                       <span class="badge badge-unpaid"> Chưa trả </span>
 
                       {% endif %}
-                    </tr>td>
+                    </td>
 
                     <td>
-                      <a
-                        href="/edit_debt_pay/{{ debt.DebtID }}"
-                        class="btn btn-warning btn-sm">
+                      <button
+                        class="btn btn-warning btn-sm"
+                        data-bs-toggle="modal"
+                        data-bs-target="#editModal{{ debt.DebtID }}">
                         Sửa
+                      </button>
+
+                      <a
+                        href="/delete_debt_pay/{{ debt.DebtID }}"
+                        class="btn btn-danger btn-sm"
+                        onclick="return confirm('Xóa khoản nợ?');">
+                        Xóa
                       </a>
 
                       {% if debt.Status == "Unpaid" %}
@@ -244,7 +252,7 @@
       let total = 0;
 
       document.querySelectorAll(".debt-amount").forEach((item) => {
-        let value = item.innerText.replaceAll(",", "").trim();
+        let value = item.innerText.replaceAll(".", "").replace("đ", "").trim();
 
         total += Number(value);
       });
@@ -275,5 +283,77 @@
         }
       });
     </script>
+    {% for debt in debts %}
+    <div class="modal fade" id="editModal{{ debt.DebtID }}" tabindex="-1">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <form action="/edit_debt_pay/{{ debt.DebtID }}" method="POST">
+            <div class="modal-header">
+              <h5 class="modal-title">Sửa khoản nợ</h5>
+
+              <button
+                type="button"
+                class="btn-close"
+                data-bs-dismiss="modal"></button>
+            </div>
+
+            <div class="modal-body">
+              <div class="mb-3">
+                <label>Người cho vay</label>
+
+                <input
+                  type="text"
+                  name="person"
+                  class="form-control"
+                  value="{{ debt.PersonName }}"
+                  required />
+              </div>
+
+              <div class="mb-3">
+                <label>Số tiền</label>
+
+                <input
+                  type="number"
+                  name="amount"
+                  class="form-control"
+                  value="{{ debt.Amount }}"
+                  required />
+              </div>
+
+              <div class="mb-3">
+                <label>Hạn trả</label>
+
+                <input
+                  type="date"
+                  name="due_date"
+                  class="form-control"
+                  value="{{ debt.DueDate }}"
+                  required />
+              </div>
+
+              <div class="mb-3">
+                <label>Ghi chú</label>
+
+                <textarea name="note" class="form-control">
+{{ debt.Note }}</textarea
+                >
+              </div>
+            </div>
+
+            <div class="modal-footer">
+              <button
+                type="button"
+                class="btn btn-secondary"
+                data-bs-dismiss="modal">
+                Hủy
+              </button>
+
+              <button type="submit" class="btn btn-primary">Lưu</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
   </body>
 </html>

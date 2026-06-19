@@ -182,9 +182,9 @@ def delete_transaction(id):
     cursor = conn.cursor()
 
     cursor.execute("""
-        DELETE FROM Transactions
-        WHERE TransactionID = ?
-    """, id)
+    DELETE FROM Transactions
+    WHERE TransactionID = ?
+    """, (id,))
 
     conn.commit()
     conn.close()
@@ -235,10 +235,10 @@ def edit_transaction(id):
         )
 
     cursor.execute("""
-        SELECT *
-        FROM Transactions
-        WHERE TransactionID=?
-    """,id)
+    SELECT *
+    FROM Transactions
+    WHERE TransactionID=?
+    """,(id,))
 
     transaction = cursor.fetchone()
 
@@ -320,7 +320,21 @@ def add_debt_pay():
 
     return redirect(url_for("debt_pay"))
 
+@app.route("/delete_debt_pay/<int:id>")
+def delete_debt_pay(id):
 
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    cursor.execute(
+        "DELETE FROM DebtPay WHERE DebtID=?",
+        (id,)
+    )
+
+    conn.commit()
+    conn.close()
+
+    return redirect(url_for("debt_pay"))
 # =====================================
 # PAID DEBT
 # =====================================
@@ -514,7 +528,21 @@ def edit_debt_receive(id):
         "edit_debt_receive.html",
         debt=debt
     )
+@app.route("/delete_debt_receive/<int:id>")
+def delete_debt_receive(id):
 
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    cursor.execute(
+        "DELETE FROM DebtReceive WHERE DebtID=?",
+        (id,)
+    )
+
+    conn.commit()
+    conn.close()
+
+    return redirect(url_for("debt_receive"))
 # =====================================
 # COLLECTED
 # =====================================
@@ -571,8 +599,8 @@ def report():
     values = []
 
     for row in rows:
-        months.append(f"Tháng {row.MonthNum}")
-        values.append(float(row.TotalAmount))
+        months.append(f"Tháng {row['MonthNum']}")
+        values.append(float(row['TotalAmount']))
 
     conn.close()
 

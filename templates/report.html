@@ -151,7 +151,8 @@
       {{ values|tojson }};
     </script>
 
-    <script src="{{ url_for('static', filename='js/chart.js') }}"></script>
+    <script src="{{ url_for('static',
+filename='js/chart.js') }}"></script>
     <script>
       function toggleSidebar() {
         document.getElementById("sidebar").classList.toggle("show");

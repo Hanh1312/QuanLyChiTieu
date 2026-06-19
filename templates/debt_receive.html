@@ -143,10 +143,18 @@
                     </td>
 
                     <td>
-                      <a
-                        href="/edit_debt_receive/{{ debt.DebtID }}"
-                        class="btn btn-warning btn-sm">
+                      <button
+                        class="btn btn-warning btn-sm"
+                        data-bs-toggle="modal"
+                        data-bs-target="#editReceiveModal{{ debt.DebtID }}">
                         Sửa
+                      </button>
+
+                      <a
+                        href="/delete_debt_receive/{{ debt.DebtID }}"
+                        class="btn btn-danger btn-sm"
+                        onclick="return confirm('Xóa khoản cho vay?');">
+                        Xóa
                       </a>
 
                       {% if debt.Status == "Uncollected" %}
@@ -164,6 +172,80 @@
                   {% endfor %}
                 </tbody>
               </table>
+              {% for debt in debts %}
+
+              <div
+                class="modal fade"
+                id="editReceiveModal{{ debt.DebtID }}"
+                tabindex="-1">
+                <div class="modal-dialog">
+                  <div class="modal-content">
+                    <form
+                      action="/edit_debt_receive/{{ debt.DebtID }}"
+                      method="POST">
+                      <div class="modal-header">
+                        <h5 class="modal-title">Sửa khoản cho vay</h5>
+
+                        <button
+                          type="button"
+                          class="btn-close"
+                          data-bs-dismiss="modal"></button>
+                      </div>
+
+                      <div class="modal-body">
+                        <label>Người vay</label>
+
+                        <input
+                          type="text"
+                          name="person"
+                          class="form-control mb-3"
+                          value="{{ debt.PersonName }}"
+                          required />
+
+                        <label>Số tiền</label>
+
+                        <input
+                          type="number"
+                          name="amount"
+                          class="form-control mb-3"
+                          value="{{ debt.Amount }}"
+                          required />
+
+                        <label>Hạn thu</label>
+
+                        <input
+                          type="date"
+                          name="due_date"
+                          class="form-control mb-3"
+                          value="{{ debt.DueDate }}"
+                          required />
+
+                        <label>Ghi chú</label>
+
+                        <textarea name="note" class="form-control">
+                              {{ debt.Note }}
+                              </textarea
+                        >
+                      </div>
+
+                      <div class="modal-footer">
+                        <button
+                          type="button"
+                          class="btn btn-secondary"
+                          data-bs-dismiss="modal">
+                          Hủy
+                        </button>
+
+                        <button type="submit" class="btn btn-primary">
+                          Lưu
+                        </button>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+              </div>
+
+              {% endfor %}
             </div>
           </div>
         </div>
@@ -192,7 +274,7 @@
                 <input
                   type="text"
                   name="person"
-                  class="form-control"
+                  class="form-control mb-3"
                   required />
               </div>
 
@@ -244,7 +326,7 @@
       let totalReceive = 0;
 
       document.querySelectorAll(".receive-amount").forEach((item) => {
-        let value = item.innerText.replaceAll(",", "").trim();
+        let value = item.innerText.replaceAll(".", "").replace("đ", "").trim();
 
         totalReceive += Number(value);
       });

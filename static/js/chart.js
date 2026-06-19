@@ -108,6 +108,7 @@ if (pieCanvas) {
 
     options: {
       responsive: true,
+      maintainAspectRatio: false,
     },
   });
 }
