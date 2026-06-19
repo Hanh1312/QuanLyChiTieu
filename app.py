@@ -394,53 +394,6 @@ def edit_debt_pay(id):
         debt=debt
     )
 
-@app.route("/edit_debt_pay/<int:id>", methods=["GET", "POST"])
-def edit_debt_pay(id):
-
-    conn = get_connection()
-    cursor = conn.cursor()
-
-    if request.method == "POST":
-
-        cursor.execute("""
-        UPDATE DebtPay
-        SET
-            PersonName=?,
-            Amount=?,
-            DueDate=?,
-            Note=?
-        WHERE DebtID=?
-        """,
-        (
-            request.form["person"],
-            request.form["amount"],
-            request.form["due_date"],
-            request.form["note"],
-            id
-        ))
-
-        conn.commit()
-        conn.close()
-
-        flash("Đã cập nhật khoản nợ")
-
-        return redirect(url_for("debt_pay"))
-
-    cursor.execute("""
-    SELECT *
-    FROM DebtPay
-    WHERE DebtID=?
-    """, (id,))
-
-    debt = cursor.fetchone()
-
-    conn.close()
-
-    return render_template(
-        "edit_debt_pay.html",
-        debt=debt
-    )
-
 # =====================================
 # DEBT RECEIVE
 # =====================================
