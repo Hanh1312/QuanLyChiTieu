@@ -422,52 +422,7 @@ def debt_receive():
         debts=rows
     )
 
-@app.route(
-    "/edit_debt_receive/<int:id>",
-    methods=["GET","POST"]
-)
-def edit_debt_receive(id):
 
-    conn = get_connection()
-    cursor = conn.cursor()
-
-    if request.method == "POST":
-
-        cursor.execute("""
-            UPDATE DebtReceive
-            SET
-                PersonName=?,
-                Amount=?,
-                DueDate=?,
-                Note=?
-            WHERE DebtID=?
-        """,
-        (
-            request.form["person"],
-            request.form["amount"],
-            request.form["due_date"],
-            request.form["note"],
-            id
-        ))
-
-        conn.commit()
-
-        return redirect(
-            url_for("debt_receive")
-        )
-
-    cursor.execute("""
-        SELECT *
-        FROM DebtReceive
-        WHERE DebtID=?
-    """,(id,))
-
-    debt = cursor.fetchone()
-
-    return render_template(
-        "edit_debt_receive.html",
-        debt=debt
-    )
 # =====================================
 # ADD DEBT RECEIVE
 # =====================================
