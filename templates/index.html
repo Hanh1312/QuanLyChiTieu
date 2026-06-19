@@ -21,6 +21,10 @@
     <button class="menu-toggle" onclick="toggleSidebar()">
       <i class="bi bi-list"></i>
     </button>
+    <div class="mobile-header">
+      <h3>Dashboard</h3>
+    </div>
+    <div id="overlay" onclick="toggleSidebar()"></div>
     <div class="container-fluid">
       <div class="row">
         <!-- SIDEBAR -->
@@ -28,7 +32,7 @@
         <div class="col-md-2 sidebar p-4" id="sidebar">
           <h4 class="sidebar-title mb-4">💰 Chi Tiêu</h4>
 
-          <<a href="/dashboard">
+          <a href="/dashboard" class="active">
             <i class="bi bi-speedometer2"></i>
             Dashboard
           </a>
@@ -57,6 +61,9 @@
             <i class="bi bi-box-arrow-right"></i>
             Đăng xuất
           </a>
+          <hr />
+
+          <button id="darkBtn" class="btn btn-dark w-100">🌙 Dark Mode</button>
         </div>
 
         <!-- CONTENT -->
@@ -155,37 +162,67 @@
       const ctx = document.getElementById("dashboardChart");
 
       new Chart(ctx, {
-        type: "doughnut",
+          type: "doughnut",
 
-        data: {
-          labels: ["Thu nhập", "Chi tiêu", "Nợ phải trả", "Người nợ mình"],
+          data: {
+              labels: [
+                  "Thu nhập",
+                  "Chi tiêu",
+                  "Nợ phải trả",
+                  "Tiền cho mượn"
+              ],
 
-          datasets: [
-            {
-              data: [{ income }, { expense }, { debt_pay }, { debt_receive }],
+              datasets: [
+                  {
+                      data: [
+                          {{ income }},
+                          {{ expense }},
+                          {{ debt_pay }},
+                          {{ debt_receive }}
+                      ],
 
-              backgroundColor: ["#c7f9cc", "#ffc8dd", "#ffeaa7", "#a2d2ff"],
-            },
-          ],
-        },
-      });
-    </script>
-    <button
-      id="darkBtn"
-      class="btn btn-dark position-fixed"
-      style="right: 20px; bottom: 20px; z-index: 999">
-      🌙
-    </button>
+                      backgroundColor: [
+                          "#c7f9cc",
+                          "#ffc8dd",
+                          "#ffeaa7",
+                          "#a2d2ff"
+                      ]
+                  }
+              ]
+          },
 
-    <script>
-      document.getElementById("darkBtn").addEventListener("click", () => {
-        document.getElementById("body").classList.toggle("dark-mode");
+          options: {
+              responsive: true,
+              plugins: {
+                  legend: {
+                      position: "top"
+                  }
+              }
+          }
       });
     </script>
     <script>
       function toggleSidebar() {
         document.getElementById("sidebar").classList.toggle("show");
+
+        document.getElementById("overlay").classList.toggle("show");
       }
+
+      const darkBtn = document.getElementById("darkBtn");
+
+      if (localStorage.getItem("darkMode") === "on") {
+        document.getElementById("body").classList.add("dark-mode");
+      }
+
+      darkBtn.addEventListener("click", () => {
+        document.getElementById("body").classList.toggle("dark-mode");
+
+        if (document.getElementById("body").classList.contains("dark-mode")) {
+          localStorage.setItem("darkMode", "on");
+        } else {
+          localStorage.removeItem("darkMode");
+        }
+      });
     </script>
   </body>
 </html>

@@ -291,13 +291,35 @@ body {
 ========================= */
 
 .menu-toggle {
-  display: flex;
+  display: none;
+
+  position: fixed;
+
+  top: 10px;
+
+  left: 10px;
+
+  width: 45px;
+
+  height: 45px;
+
+  border: none;
+
+  border-radius: 10px;
+
+  background: #a7b7ff;
+
+  color: white;
+
+  font-size: 22px;
+
+  z-index: 9999;
+
+  cursor: pointer;
 
   align-items: center;
 
   justify-content: center;
-
-  font-size: 28px;
 }
 
 .welcome-box {
@@ -350,7 +372,14 @@ body {
 
 @media (max-width: 992px) {
   .menu-toggle {
-    display: block;
+    display: flex;
+  }
+  .main-content {
+    width: 100% !important;
+
+    margin-left: 0 !important;
+
+    padding-top: 65px;
   }
 
   .sidebar {
@@ -364,23 +393,29 @@ body {
 
     height: 100vh;
 
-    z-index: 999;
+    background: white;
+
+    z-index: 1000;
 
     transition: 0.3s;
-  }
-  .sidebar a i {
-    margin-right: 10px;
 
-    width: 20px;
+    overflow-y: auto;
+
+    box-shadow: 5px 0 20px rgba(0, 0, 0, 0.1);
   }
+
   .sidebar.show {
     left: 0;
   }
 
-  .main-content {
-    margin-left: 0 !important;
+  .sidebar a i {
+    margin-right: 10px;
+  }
 
+  .main-content {
     width: 100% !important;
+
+    margin-left: 0 !important;
 
     padding-top: 80px;
   }
@@ -389,7 +424,166 @@ body {
     flex-direction: column;
 
     align-items: flex-start;
+  }
+}
+#overlay {
+  position: fixed;
 
-    gap: 15px;
+  top: 0;
+  left: 0;
+
+  width: 100%;
+  height: 100%;
+
+  background: rgba(0, 0, 0, 0.35);
+
+  display: none;
+
+  z-index: 500;
+}
+
+#overlay.show {
+  display: block;
+}
+
+/* ==========================
+   DARK MODE FULL
+========================== */
+
+.dark-mode {
+  background: #121212;
+  color: #f5f5f5;
+}
+
+.dark-mode .sidebar {
+  background: #1b1b1b;
+  border-right: 1px solid #333;
+}
+
+.dark-mode .sidebar-title {
+  color: #b8c0ff;
+}
+
+.dark-mode .sidebar a {
+  color: #f5f5f5;
+}
+
+.dark-mode .sidebar a:hover {
+  background: #2a2a2a;
+}
+
+.dark-mode .topbar,
+.dark-mode .chart-card,
+.dark-mode .welcome-box,
+.dark-mode .table-container {
+  background: #1e1e1e;
+  color: white;
+}
+
+.dark-mode .page-title {
+  color: #b8c0ff;
+}
+
+.dark-mode .table {
+  color: white;
+}
+
+.dark-mode .table thead {
+  background: #2a2a2a;
+}
+
+.dark-mode .form-control {
+  background: #2a2a2a;
+  color: white;
+  border-color: #444;
+}
+
+.dark-mode .form-control::placeholder {
+  color: #aaa;
+}
+
+.dark-mode .form-control:focus {
+  background: #2a2a2a;
+  color: white;
+}
+.dark-mode .stat-card {
+  color: #ffffff;
+}
+
+.dark-mode .card-income {
+  background: #174c38;
+}
+
+.dark-mode .card-expense {
+  background: #5a2330;
+}
+
+.dark-mode .card-balance {
+  background: #24345f;
+}
+
+.dark-mode .card-debt {
+  background: #5a5120;
+}
+
+.dark-mode .card-receive {
+  background: #1f4b66;
+}
+
+.dark-mode .sidebar .active {
+  background: #3b4cca;
+  color: white;
+}
+
+.dark-mode .sidebar a:hover {
+  color: white;
+}
+
+.dark-mode h1,
+.dark-mode h2,
+.dark-mode h3,
+.dark-mode h4,
+.dark-mode h5,
+.dark-mode h6,
+.dark-mode p,
+.dark-mode td,
+.dark-mode th,
+.dark-mode label {
+  color: #f5f5f5;
+}
+
+.dark-mode .modal-content {
+  background: #1e1e1e;
+  color: white;
+}
+
+.dark-mode .form-select {
+  background: #2a2a2a;
+  color: white;
+  border-color: #444;
+}
+
+.dark-mode .form-select option {
+  background: #2a2a2a;
+}
+.mobile-header {
+  display: none;
+}
+
+@media (max-width: 992px) {
+  .mobile-header {
+    display: block;
+
+    margin-bottom: 20px;
+
+    padding-left: 60px;
+  }
+
+  .mobile-header h3 {
+    color: #6c7cff;
+
+    font-weight: 700;
+
+    margin: 0;
   }
 }
