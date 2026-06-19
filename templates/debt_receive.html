@@ -123,7 +123,7 @@
                     <td>{{ debt.PersonName }}</td>
 
                     <td class="receive-amount">
-                      {{ "{:,.0f}".format(debt.Amount) }}
+                      {{ "{:,.0f}".format(debt.Amount).replace(",", ".") }} đ
                     </td>
 
                     <td>{{ debt.DueDate }}</td>
@@ -143,6 +143,12 @@
                     </td>
 
                     <td>
+                      <a
+                        href="/edit_debt_receive/{{ debt.DebtID }}"
+                        class="btn btn-warning btn-sm">
+                        Sửa
+                      </a>
+
                       {% if debt.Status == "Uncollected" %}
 
                       <a

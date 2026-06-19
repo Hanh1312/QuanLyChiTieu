@@ -338,7 +338,7 @@ def paid_debt(id):
         UPDATE DebtPay
         SET Status='Paid'
         WHERE DebtID=?
-    """, id)
+    """,(id,))
 
     conn.commit()
     conn.close()
@@ -347,6 +347,99 @@ def paid_debt(id):
 
     return redirect(url_for("debt_pay"))
 
+@app.route(
+    "/edit_debt_pay/<int:id>",
+    methods=["GET","POST"]
+)
+def edit_debt_pay(id):
+
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    if request.method == "POST":
+
+        cursor.execute("""
+            UPDATE DebtPay
+            SET
+                PersonName=?,
+                Amount=?,
+                DueDate=?,
+                Note=?
+            WHERE DebtID=?
+        """,
+        (
+            request.form["person"],
+            request.form["amount"],
+            request.form["due_date"],
+            request.form["note"],
+            id
+        ))
+
+        conn.commit()
+
+        return redirect(
+            url_for("debt_pay")
+        )
+
+    cursor.execute("""
+        SELECT *
+        FROM DebtPay
+        WHERE DebtID=?
+    """,(id,))
+
+    debt = cursor.fetchone()
+
+    return render_template(
+        "edit_debt_pay.html",
+        debt=debt
+    )
+
+@app.route("/edit_debt_pay/<int:id>", methods=["GET", "POST"])
+def edit_debt_pay(id):
+
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    if request.method == "POST":
+
+        cursor.execute("""
+        UPDATE DebtPay
+        SET
+            PersonName=?,
+            Amount=?,
+            DueDate=?,
+            Note=?
+        WHERE DebtID=?
+        """,
+        (
+            request.form["person"],
+            request.form["amount"],
+            request.form["due_date"],
+            request.form["note"],
+            id
+        ))
+
+        conn.commit()
+        conn.close()
+
+        flash("Đã cập nhật khoản nợ")
+
+        return redirect(url_for("debt_pay"))
+
+    cursor.execute("""
+    SELECT *
+    FROM DebtPay
+    WHERE DebtID=?
+    """, (id,))
+
+    debt = cursor.fetchone()
+
+    conn.close()
+
+    return render_template(
+        "edit_debt_pay.html",
+        debt=debt
+    )
 
 # =====================================
 # DEBT RECEIVE
@@ -376,7 +469,52 @@ def debt_receive():
         debts=rows
     )
 
+@app.route(
+    "/edit_debt_receive/<int:id>",
+    methods=["GET","POST"]
+)
+def edit_debt_receive(id):
 
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    if request.method == "POST":
+
+        cursor.execute("""
+            UPDATE DebtReceive
+            SET
+                PersonName=?,
+                Amount=?,
+                DueDate=?,
+                Note=?
+            WHERE DebtID=?
+        """,
+        (
+            request.form["person"],
+            request.form["amount"],
+            request.form["due_date"],
+            request.form["note"],
+            id
+        ))
+
+        conn.commit()
+
+        return redirect(
+            url_for("debt_receive")
+        )
+
+    cursor.execute("""
+        SELECT *
+        FROM DebtReceive
+        WHERE DebtID=?
+    """,(id,))
+
+    debt = cursor.fetchone()
+
+    return render_template(
+        "edit_debt_receive.html",
+        debt=debt
+    )
 # =====================================
 # ADD DEBT RECEIVE
 # =====================================
@@ -422,6 +560,52 @@ def add_debt_receive():
 
     return redirect(url_for("debt_receive"))
 
+@app.route("/edit_debt_receive/<int:id>", methods=["GET", "POST"])
+def edit_debt_receive(id):
+
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    if request.method == "POST":
+
+        cursor.execute("""
+        UPDATE DebtReceive
+        SET
+            PersonName=?,
+            Amount=?,
+            DueDate=?,
+            Note=?
+        WHERE DebtID=?
+        """,
+        (
+            request.form["person"],
+            request.form["amount"],
+            request.form["due_date"],
+            request.form["note"],
+            id
+        ))
+
+        conn.commit()
+        conn.close()
+
+        flash("Đã cập nhật khoản cho vay")
+
+        return redirect(url_for("debt_receive"))
+
+    cursor.execute("""
+    SELECT *
+    FROM DebtReceive
+    WHERE DebtID=?
+    """, (id,))
+
+    debt = cursor.fetchone()
+
+    conn.close()
+
+    return render_template(
+        "edit_debt_receive.html",
+        debt=debt
+    )
 
 # =====================================
 # COLLECTED
@@ -437,10 +621,10 @@ def collected(id):
     cursor = conn.cursor()
 
     cursor.execute("""
-        UPDATE DebtReceive
-        SET Status='Collected'
-        WHERE DebtID=?
-    """, id)
+    UPDATE DebtReceive
+    SET Status='Collected'
+    WHERE DebtID=?
+    """,(id,))
 
     conn.commit()
     conn.close()

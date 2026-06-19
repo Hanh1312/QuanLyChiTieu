@@ -125,7 +125,7 @@
                     <td>{{ debt.PersonName }}</td>
 
                     <td class="debt-amount">
-                      {{ "{:,.0f}".format(debt.Amount) }}
+                      {{ "{:,.0f}".format(debt.Amount).replace(",", ".") }} đ
                     </td>
 
                     <td>
@@ -145,9 +145,15 @@
                       <span class="badge badge-unpaid"> Chưa trả </span>
 
                       {% endif %}
-                    </td>
+                    </tr>td>
 
                     <td>
+                      <a
+                        href="/edit_debt_pay/{{ debt.DebtID }}"
+                        class="btn btn-warning btn-sm">
+                        Sửa
+                      </a>
+
                       {% if debt.Status == "Unpaid" %}
 
                       <a
