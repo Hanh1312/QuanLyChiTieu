@@ -51,6 +51,11 @@
             Tiền cho vay
           </a>
 
+          <a href="/savings">
+            <i class="bi bi-piggy-bank"></i>
+            Quỹ tiết kiệm
+          </a>
+
           <a href="/report">
             <i class="bi bi-bar-chart"></i>
             Thống kê
@@ -92,7 +97,9 @@
               <div class="stat-card card-receive">
                 <h6>Tổng tiền chưa thu</h6>
 
-                <h3 id="totalReceive">0 đ</h3>
+                <h3>
+                  {{ "{:,.0f}".format(total_receive).replace(",", ".") }} đ
+                </h3>
               </div>
             </div>
           </div>

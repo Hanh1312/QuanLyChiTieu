@@ -51,7 +51,10 @@
             <i class="bi bi-wallet2"></i>
             Người nợ mình
           </a>
-
+          <a href="/savings">
+            <i class="bi bi-piggy-bank"></i>
+            Quỹ tiết kiệm
+          </a>
           <a href="/report">
             <i class="bi bi-bar-chart"></i>
             Thống kê
@@ -72,7 +75,7 @@
           <div class="topbar">
             <div class="welcome-box">
               <div>
-                <h3>👋 Xin chào {{ session.user }}</h3>
+                <h3>👋 Xin chào Manh</h3>
 
                 <p>Theo dõi tài chính cá nhân dễ dàng hơn</p>
               </div>
@@ -146,12 +149,17 @@
               </div>
             </div>
           </div>
-
+          <div class="col-md-4">
+            <div class="stat-card card-saving">
+              <h6>Quỹ tiết kiệm</h6>
+              <h3>{{ "{:,.0f}".format(saving_total).replace(",", ".") }} đ</h3>
+            </div>
+          </div>
           <div class="chart-card mt-4">
             <h5 class="mb-4">Tổng quan tài chính</h5>
 
             <div class="chart-wrapper">
-              <canvas id="dashboardChart"></canvas>
+              <canvas id="dashboardChart" style="max-height: 350px"> </canvas>
             </div>
           </div>
         </div>

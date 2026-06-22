@@ -34,6 +34,7 @@ def create_tables():
     CREATE TABLE IF NOT EXISTS Transactions
     (
         TransactionID INTEGER PRIMARY KEY AUTOINCREMENT,
+        UserID INTEGER,
         TransactionDate TEXT,
         Type TEXT,
         Category TEXT,
@@ -46,6 +47,7 @@ def create_tables():
     CREATE TABLE IF NOT EXISTS DebtPay
     (
         DebtID INTEGER PRIMARY KEY AUTOINCREMENT,
+        UserID INTEGER,
         PersonName TEXT,
         Amount REAL,
         DueDate TEXT,
@@ -58,10 +60,23 @@ def create_tables():
     CREATE TABLE IF NOT EXISTS DebtReceive
     (
         DebtID INTEGER PRIMARY KEY AUTOINCREMENT,
+        UserID INTEGER,
         PersonName TEXT,
         Amount REAL,
         DueDate TEXT,
         Status TEXT DEFAULT 'Uncollected',
+        Note TEXT
+    )
+    """)
+
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS Savings
+    (
+        SavingID INTEGER PRIMARY KEY AUTOINCREMENT,
+        UserID INTEGER,
+        SavingDate TEXT,
+        Type TEXT DEFAULT 'Deposit',
+        Amount REAL,
         Note TEXT
     )
     """)
@@ -116,19 +131,17 @@ def check_login(username, password):
 # DASHBOARD
 # =====================================
 
-def get_total_income():
+def get_total_income(user_id):
 
     conn = get_connection()
     cursor = conn.cursor()
 
     cursor.execute("""
-        SELECT COALESCE(
-            SUM(Amount),
-            0
-        )
-        FROM Transactions
-        WHERE Type='Income'
-    """)
+    SELECT COALESCE(SUM(Amount),0)
+    FROM Transactions
+    WHERE Type='Income'
+    AND UserID=?
+    """,(user_id,))
 
     result = cursor.fetchone()[0]
 
@@ -137,19 +150,18 @@ def get_total_income():
     return result
 
 
-def get_total_expense():
+def get_total_expense(user_id):
 
     conn = get_connection()
     cursor = conn.cursor()
 
+
     cursor.execute("""
-        SELECT COALESCE(
-            SUM(Amount),
-            0
-        )
-        FROM Transactions
-        WHERE Type='Expense'
-    """)
+    SELECT COALESCE(SUM(Amount),0)
+    FROM Transactions
+    WHERE Type='Expense'
+    AND UserID=?
+    """,(user_id,))
 
     result = cursor.fetchone()[0]
 
@@ -158,19 +170,17 @@ def get_total_expense():
     return result
 
 
-def get_total_debt_pay():
+def get_total_debt_pay(user_id):
 
     conn = get_connection()
     cursor = conn.cursor()
 
     cursor.execute("""
-        SELECT COALESCE(
-            SUM(Amount),
-            0
-        )
-        FROM DebtPay
-        WHERE Status='Unpaid'
-    """)
+    SELECT COALESCE(SUM(Amount),0)
+    FROM DebtPay
+    WHERE Status='Unpaid'
+    AND UserID=?
+    """,(user_id,))
 
     result = cursor.fetchone()[0]
 
@@ -179,19 +189,17 @@ def get_total_debt_pay():
     return result
 
 
-def get_total_debt_receive():
+def get_total_debt_receive(user_id):
 
     conn = get_connection()
     cursor = conn.cursor()
 
     cursor.execute("""
-        SELECT COALESCE(
-            SUM(Amount),
-            0
-        )
+        SELECT COALESCE(SUM(Amount),0)
         FROM DebtReceive
         WHERE Status='Uncollected'
-    """)
+        AND UserID=?
+        """,(user_id,))
 
     result = cursor.fetchone()[0]
 
@@ -203,8 +211,7 @@ def get_total_debt_receive():
 # =====================================
 # DUE DEBT WARNING
 # =====================================
-
-def get_due_debts():
+def get_due_debts(user_id):
 
     conn = get_connection()
     cursor = conn.cursor()
@@ -213,7 +220,8 @@ def get_due_debts():
         SELECT *
         FROM DebtPay
         WHERE Status='Unpaid'
-    """)
+        AND UserID=?
+    """,(user_id,))
 
     debts = cursor.fetchall()
 
@@ -249,3 +257,29 @@ def get_due_debts():
             pass
 
     return warning_list
+
+def get_total_saving(user_id):
+
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    cursor.execute("""
+    SELECT Type, Amount      
+    FROM Savings
+    WHERE UserID=?
+    """,(user_id,))
+
+    rows = cursor.fetchall()
+
+    conn.close()
+
+    total = 0
+
+    for row in rows:
+
+        if row["Type"] == "Deposit":
+            total += row["Amount"]
+        else:
+            total -= row["Amount"]
+
+    return total

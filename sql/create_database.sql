@@ -55,8 +55,25 @@ CREATE TABLE Budget
     BudgetYear INT NOT NULL,
     Amount DECIMAL(18,2) NOT NULL
 );
+DROP TABLE Savings;
+CREATE TABLE Savings
+(
+    SavingID INTEGER PRIMARY KEY AUTOINCREMENT,
+    UserID INTEGER,
+    SavingDate TEXT,
+    Type TEXT,
+    Amount REAL,
+    Note TEXT
+)
 
 SELECT *
 FROM DebtPay
 WHERE Status='Unpaid'
 AND DATEDIFF(day,GETDATE(),DueDate) <= 3
+
+ALTER TABLE Transactions
+ADD UserID INTEGER
+
+UPDATE Savings
+SET UserID = 1
+WHERE UserID IS NULL;

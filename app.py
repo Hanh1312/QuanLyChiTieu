@@ -39,9 +39,10 @@ def login():
         password = request.form["password"]
 
         user = check_login(username, password)
-
+        print(user)
         if user:
-            session["user"] = username
+            session["user"] = user["Username"]
+            session["user_id"] = user["UserID"]
             return redirect(url_for("dashboard"))
         else:
             flash("Sai tài khoản hoặc mật khẩu")
@@ -71,23 +72,24 @@ def dashboard():
     if not login_required():
         return redirect(url_for("login"))
 
-    income = get_total_income()
-    expense = get_total_expense()
-
-    debt_pay = get_total_debt_pay()
-    debt_receive = get_total_debt_receive()
+    income = get_total_income(session["user_id"])
+    expense = get_total_expense(session["user_id"])
+    debt_pay = get_total_debt_pay(session["user_id"])
+    debt_receive = get_total_debt_receive(session["user_id"])
+    saving_total = get_total_saving(session["user_id"])
 
     balance = income - expense
-    warnings = get_due_debts()
+    warnings = get_due_debts(session["user_id"])
     return render_template(
         "index.html",
         income=income,
         expense=expense,
+        balance=balance,
         debt_pay=debt_pay,
         debt_receive=debt_receive,
-        balance=balance,
+        saving_total=saving_total,
         warnings=warnings
-    )   
+    )
 
 
 # =====================================
@@ -104,10 +106,14 @@ def transactions():
     cursor = conn.cursor()
 
     cursor.execute("""
-        SELECT *
-        FROM Transactions
-        ORDER BY TransactionDate DESC
-    """)
+    SELECT *
+    FROM Transactions
+    WHERE UserID=?
+    ORDER BY TransactionDate DESC
+    """,
+    (
+        session["user_id"],
+    ))
 
     rows = cursor.fetchall()
 
@@ -141,6 +147,7 @@ def add_transaction():
     cursor.execute("""
         INSERT INTO Transactions
         (
+            UserID,
             TransactionDate,
             Type,
             Category,
@@ -149,10 +156,11 @@ def add_transaction():
         )
         VALUES
         (
-            ?, ?, ?, ?, ?
+            ?, ?, ?, ?, ?, ?
         )
     """,
     (
+        session["user_id"],
         date,
         trans_type,
         category,
@@ -184,6 +192,7 @@ def delete_transaction(id):
     cursor.execute("""
     DELETE FROM Transactions
     WHERE TransactionID = ?
+    AND UserID=?
     """, (id,))
 
     conn.commit()
@@ -209,7 +218,7 @@ def edit_transaction(id):
         UPDATE Transactions
 
         SET
-
+            
             Type=?,
             Category=?,
             Amount=?,
@@ -227,7 +236,7 @@ def edit_transaction(id):
         ))
 
         conn.commit()
-
+        conn.close()
         return redirect(
             url_for(
                 "transactions"
@@ -238,10 +247,15 @@ def edit_transaction(id):
     SELECT *
     FROM Transactions
     WHERE TransactionID=?
-    """,(id,))
+    AND UserID=?
+    """,
+    (
+        id,
+        session["user_id"]
+    ))
 
     transaction = cursor.fetchone()
-
+    conn.close()
     return render_template(
         "edit_transaction.html",
         transaction=transaction
@@ -262,16 +276,27 @@ def debt_pay():
     cursor.execute("""
         SELECT *
         FROM DebtPay
+        WHERE UserID=?
         ORDER BY DueDate
-    """)
+    """,
+    (
+    session["user_id"],
+    ))
 
     rows = cursor.fetchall()
 
     conn.close()
 
+    total_debt = sum(
+        debt["Amount"]
+        for debt in rows
+        if debt["Status"] == "Unpaid"
+    )
+
     return render_template(
         "debt_pay.html",
-        debts=rows
+        debts=rows,
+        total_debt=total_debt
     )
 
 
@@ -296,6 +321,7 @@ def add_debt_pay():
     cursor.execute("""
         INSERT INTO DebtPay
         (
+            UserID,
             PersonName,
             Amount,
             DueDate,
@@ -303,10 +329,11 @@ def add_debt_pay():
         )
         VALUES
         (
-            ?, ?, ?, ?
+            ?, ?, ?, ?, ?
         )
     """,
     (
+        session["user_id"],
         person,
         amount,
         due_date,
@@ -380,6 +407,7 @@ def edit_debt_pay(id):
                 DueDate=?,
                 Note=?
             WHERE DebtID=?
+            AND UserID=session["user_id"]
         """,
         (
             request.form["person"],
@@ -424,16 +452,27 @@ def debt_receive():
     cursor.execute("""
         SELECT *
         FROM DebtReceive
+        WHERE UserID=?
         ORDER BY DueDate
-    """)
+    """,
+    (
+        session["user_id"],
+    ))
 
     rows = cursor.fetchall()
 
     conn.close()
 
+    total_receive = sum(
+        debt["Amount"]
+        for debt in rows
+        if debt["Status"] == "Uncollected"
+    )
+
     return render_template(
         "debt_receive.html",
-        debts=rows
+        debts=rows,
+        total_receive=total_receive
     )
 
 
@@ -458,6 +497,7 @@ def add_debt_receive():
     cursor.execute("""
         INSERT INTO DebtReceive
         (
+            UserID,
             PersonName,
             Amount,
             DueDate,
@@ -465,10 +505,11 @@ def add_debt_receive():
         )
         VALUES
         (
-            ?, ?, ?, ?
+            ?, ?, ?, ?, ?
         )
     """,
     (
+        session["user_id"],
         person,
         amount,
         due_date,
@@ -498,6 +539,7 @@ def edit_debt_receive(id):
             DueDate=?,
             Note=?
         WHERE DebtID=?
+        AND UserID=session["user_id"]
         """,
         (
             request.form["person"],
@@ -560,6 +602,7 @@ def collected(id):
     UPDATE DebtReceive
     SET Status='Collected'
     WHERE DebtID=?
+    AND UserID=session["user_id"]
     """,(id,))
 
     conn.commit()
@@ -589,9 +632,13 @@ def report():
             SUM(Amount) AS TotalAmount
         FROM Transactions
         WHERE Type='Expense'
+        AND UserID=?
         GROUP BY strftime('%m', TransactionDate)
         ORDER BY MonthNum
-    """)
+    """,
+    (
+        session["user_id"],
+    ))
 
     rows = cursor.fetchall()
 
@@ -610,11 +657,12 @@ def report():
         values=values
     )
 
+    
 def auto_backup():
 
     source = os.path.join(
         os.getcwd(),
-        "database.db"
+        "expense.db"
     )
 
     if os.path.exists(source):
@@ -637,6 +685,113 @@ def auto_backup():
                 filename
             )
         )
+
+@app.route("/savings")
+def savings():
+
+    if not login_required():
+        return redirect(url_for("login"))
+
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        SELECT *
+        FROM Savings
+        WHERE UserID=?
+        ORDER BY SavingDate DESC
+    """,
+    (
+        session["user_id"],
+    ))
+    rows = cursor.fetchall()
+
+    conn.close()
+
+    return render_template(
+        "savings.html",
+        savings=rows
+    )
+
+@app.route("/add_saving", methods=["POST"])
+def add_saving():
+
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    cursor.execute("""
+    INSERT INTO Savings
+    (
+        UserID,
+        SavingDate,
+        Type,
+        Amount,
+        Note
+    )
+    VALUES
+    (
+        ?, ?, ?, ?, ?
+    )
+    """,
+    (
+        session["user_id"],
+        request.form["date"],
+        request.form["type"],
+        request.form["amount"],
+        request.form["note"]
+    ))
+
+    conn.commit()
+    conn.close()
+
+    return redirect(
+        url_for("savings")
+    )
+
+@app.route("/register", methods=["GET","POST"])
+def register():
+
+    if request.method == "POST":
+
+        conn = get_connection()
+        cursor = conn.cursor()
+
+        try:
+
+            cursor.execute("""
+                INSERT INTO Users
+                (
+                    Username,
+                    PasswordHash
+                )
+                VALUES
+                (
+                    ?, ?
+                )
+            """,
+            (
+                request.form["username"],
+                request.form["password"]
+            ))
+
+            conn.commit()
+
+            flash("Đăng ký thành công")
+
+            return redirect(
+                url_for("login")
+            )
+
+        except Exception as e:
+            flash(str(e))
+
+        finally:
+            conn.close()
+
+    return render_template(
+        "register.html"
+    )
+
 
 auto_backup()
 # =====================================

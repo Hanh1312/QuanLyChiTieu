@@ -15,80 +15,50 @@
   </head>
 
   <body>
-    <div class="container mt-5">
-      <div class="card shadow p-4">
-        <h2 class="mb-4">Sửa giao dịch</h2>
-
-        <form method="POST">
-          <div class="mb-3">
-            <label class="form-label"> Loại giao dịch </label>
-
-            <select name="type" class="form-control">
-              <option
-                value="Income"
-                {%
-                if
-                transaction.Type=""
-                ="Income"
-                %}
-                selected
-                {%
-                endif
-                %}>
+    <div class="card shadow p-4">
+      <h2 class="mb-4">Sửa giao dịch</h2>
+      <form method="POST">
+        <div class="mb-3">
+          <label class="form-label"> Loại giao dịch </label>
+          <select name="type" class="form-select">
+            <option value="Income"
+                {{ "selected" if transaction["Type"] == "Income" else "" }}>
                 Thu nhập
-              </option>
+            </option>
 
-              <option
-                value="Expense"
-                {%
-                if
-                transaction.Type=""
-                ="Expense"
-                %}
-                selected
-                {%
-                endif
-                %}>
+            <option value="Expense"
+                {{ "selected" if transaction["Type"] == "Expense" else "" }}>
                 Chi tiêu
-              </option>
-            </select>
-          </div>
-
-          <div class="mb-3">
-            <label class="form-label"> Danh mục </label>
-
-            <input
-              type="text"
-              name="category"
-              class="form-control"
-              value="{{ transaction.Category }}"
-              required />
-          </div>
-
-          <div class="mb-3">
-            <label class="form-label"> Số tiền </label>
-
-            <input
-              type="number"
-              name="amount"
-              class="form-control"
-              value="{{ transaction.Amount }}"
-              required />
-          </div>
-
-          <div class="mb-3">
-            <label class="form-label"> Ghi chú </label>
-
-            <textarea name="note" rows="4" class="form-control">
+            </option>
+        </select>
+        </div>
+        <div class="mb-3">
+          <label class="form-label"> Danh mục </label>
+          <input
+            type="text"
+            name="category"
+            class="form-control"
+            value="{{ transaction.Category }}"
+            required />
+        </div>
+        <div class="mb-3">
+          <label class="form-label"> Số tiền </label>
+          <input
+            type="number"
+            name="amount"
+            class="form-control"
+            value="{{ transaction.Amount }}"
+            required />
+        </div>
+        <div class="mb-3">
+          <label class="form-label"> Ghi chú </label>
+          <textarea name="note" rows="4" class="form-control">
 {{ transaction.Note }}</textarea
-            >
-          </div>
-
-          <button type="submit" class="btn btn-primary">Lưu thay đổi</button>
-
-          <a href="/transactions" class="btn btn-secondary"> Quay lại </a>
-        </form>
-      </div>
+          >
+        </div>
+        <button type="submit" class="btn btn-primary">Lưu thay đổi</button>
+        <a href="/transactions" class="btn btn-secondary"> Quay lại </a>
+      </form>
     </div>
   </body>
 </html>

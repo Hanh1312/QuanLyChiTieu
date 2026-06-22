@@ -49,6 +49,11 @@
             Tiền cho vay
           </a>
 
+          <a href="/savings">
+            <i class="bi bi-piggy-bank"></i>
+            Quỹ tiết kiệm
+          </a>
+
           <a href="/report">
             <i class="bi bi-bar-chart"></i>
             Thống kê
@@ -150,9 +155,6 @@
       const chartValues =
       {{ values|tojson }};
     </script>
-
-    <script src="{{ url_for('static',
-filename='js/chart.js') }}"></script>
     <script>
       function toggleSidebar() {
         document.getElementById("sidebar").classList.toggle("show");
@@ -176,5 +178,7 @@ filename='js/chart.js') }}"></script>
         }
       });
     </script>
+
+    <script src="{{ url_for('static', filename='js/chart.js') }}"></script>
   </body>
 </html>
